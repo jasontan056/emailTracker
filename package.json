@@ -1,0 +1,25 @@
+{
+  "name": "emailtracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jasontan056/emailTracker.git"
+  },
+  "author": "Jason Tan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jasontan056/emailTracker/issues"
+  },
+  "homepage": "https://github.com/jasontan056/emailTracker#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "redis-mock": "^0.21.0"
+  }
+}
