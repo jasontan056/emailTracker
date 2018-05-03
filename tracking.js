@@ -40,8 +40,30 @@ exports.getPixel = function(req, res) {
       recipient.timestamp = new Date();
       recipient.ip = req.ip;
       model.updateRecipient(rid, recipient);
+      emailNotif(userId, recipient.rEmail, recipient.timestamp, recipient.ip,
+        false, true);
     } else {
       console.log("repeat open");
+      // !!! update with cookie logic to check if same device.
+      emailNotif(userId, recipient.rEmail, recipient.timestamp, recipient.ip,
+        true, true);
+    }
+  });
+}
+
+function emailNotif(userId, rEmail, timestamp, ip, reopen, sameDevice) {
+  model.findUserEmail(userId, (userEmail) => {
+    console.log("Notification to: " + userEmail);
+    console.log("Recipient " + rEmail + " has opened the email at time " +
+      timestamp + " from IP " + ip);
+    if (reopen) {
+      if (sameDevice) {
+        console.log("This is a reopen from the original device.")
+      } else {
+        console.log("This is a reopen from a new device.")
+      }
+    } else {
+      console.log("This is the first time this email has been opened.")
     }
   });
 }

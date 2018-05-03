@@ -23,6 +23,13 @@ redisClient.hmset("userEmail:hello@precognitive.io",
   new User(123, 567, "hello@precognitive.io"));
 redisClient.set("userId:123", "hello@precognitive.io");
 
+exports.findUserEmail = function(userId, callback) {
+  redisClient.get("userId:" + userId, (err, user) => {
+    console.log("in finduser");
+    console.log(user);
+    callback(user);
+  });
+};
 
 exports.createRecipientId = function(userId, rEmail, callback) {
   redisClient.get("userId:" + userId + "/rEmail:" + rEmail,
