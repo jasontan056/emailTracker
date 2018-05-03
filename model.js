@@ -25,17 +25,28 @@ redisClient.hmset("userEmail:hello@precognitive.io",
 redisClient.set("userId:123", "hello@precognitive.io");
 
 
-exports.createRecipient = function(userId, rEmail, callback) {
+exports.createRecipientId = function(userId, rEmail, callback) {
   redisClient.get("userId:" + userId + "/rEmail:" + rEmail,
     (err, rid) => {
       // Return if we already have created an rid for this recipient.
       if (rid) {
         callback(rid);
+        return;
       }
+
+      console.log("asdfasdf");
       // Create a new rid for this recipient.
       redisClient.incr('rid', function(err, newRid) {
-        redisClient.hmset("userId:" + userId + "/rEmail:" + rEmail, newRid,
+        redisClient.set("userId:" + userId + "/rEmail:" + rEmail, newRid,
           (err, res) => { callback(newRid)});
       });
     });
+};
+
+exports.createRecipient = function(rid, callback) {
+
+};
+
+exports.findRecipient = function(rid, callback) {
+  //redisClient.h
 };
