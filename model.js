@@ -13,9 +13,8 @@ class Recipient {
   constructor(rEmail, userId) {
     this.rEmail = rEmail;
     this.userId = userId;
-    this.rDeviceId = null;
-    this.timestamp = null;
-    this.ip = null;
+    this.timestamp = 0;
+    this.ip = 0;
   }
 };
 
@@ -34,19 +33,36 @@ exports.createRecipientId = function(userId, rEmail, callback) {
         return;
       }
 
-      console.log("asdfasdf");
-      // Create a new rid for this recipient.
-      redisClient.incr('rid', function(err, newRid) {
+      // Create a new rid and create the recipient.
+      redisClient.incr('rid', (err, newRid) => {
         redisClient.set("userId:" + userId + "/rEmail:" + rEmail, newRid,
-          (err, res) => { callback(newRid)});
+          (err, res) => {
+            redisClient.hmset("rid:" + newRid, new Recipient(rEmail, userId),
+              (err, recipient) => {
+                callback(newRid);
+              });
+          });
       });
     });
 };
 
-exports.createRecipient = function(rid, callback) {
-
+exports.findRecipient = function(rid, callback) {
+  console.log('in find recipient');
+  redisClient.hgetall("rid:" + rid, (err, recipient) => {
+    if (recipient) {
+      console.log('in find recipient. found recipient.');
+      callback(recipient);
+    } else {
+      console.log('in find recipient. couldnt find recipient.');
+      callback(null);
+    }
+  });
 };
 
-exports.findRecipient = function(rid, callback) {
-  //redisClient.h
+exports.updateRecipient = function(rid, recipient) {
+  console.log('in create recipient');
+
+  redisClient.hmset("rid:" + rid, recipient, (err, recipient) => {
+        console.log('in create recipient. created recipient');
+      });
 };

@@ -10,9 +10,9 @@ exports.createUrl = function(req, res) {
     res.status(400).json({error: 'Missing email'});
   }
 
-  model.createRecipient(req.userId,req.body.email, rid => {
+  model.createRecipientId(req.userId,req.body.email, rid => {
     console.log('created rid %d', rid);
-    let url = "https://" + config.HOST_NAME + "/pixel?uid=" + req.userId +
+    let url = "http://" + config.HOST_NAME + "/pixel?uid=" + req.userId +
       "&rid=" + rid;
     res.status(200).json({url: url});
   });
@@ -20,5 +20,28 @@ exports.createUrl = function(req, res) {
 
 // Logs the request for the pixel and sends back an actual pixel.
 exports.getPixel = function(req, res) {
-  console.log('Called getPixel.')
-};
+  if (!req.query.rid || !req.query.uid) {
+    res.status(400).json({error: 'Missing parameters'});
+  }
+  let rid = req.query.rid;
+  let userId = req.query.uid;
+  console.log('Called getPixel with rid %d, userId, %d', rid, userId);
+
+  model.findRecipient(rid, (recipient) => {
+    if (!recipient) {
+      console.log("couldnt find recipient");
+      res.status(400);
+      return;
+    }
+
+    console.log("found recipient");
+    if (recipient.timestamp == 0) {
+      console.log("first open");
+      recipient.timestamp = new Date();
+      recipient.ip = req.ip;
+      model.updateRecipient(rid, recipient);
+    } else {
+      console.log("repeat open");
+    }
+  });
+}
