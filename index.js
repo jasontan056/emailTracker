@@ -1,20 +1,20 @@
 'use strict';
 
-var express = require('express')
-var app = express()
+let express = require('express')
+let app = express()
 
-var tracking = require('./tracking');
-var auth = require('./auth');
+let bodyParser = require('body-parser');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+let tracking = require('./tracking');
+let auth = require('./auth');
 
 app.post('/register', auth.register);
 app.post('/login', auth.login);
 
-
-// !!! remove userId once I have it in the JWT token
-// !!! add auth middleware.
-app.post('/:userId/createUrl', auth.verifyToken,tracking.createUrl);
+app.post('/createUrl', auth.verifyToken,tracking.createUrl);
 app.get('/pixel', tracking.getPixel);
 
 app.listen(8000, function () {
-  console.log('Example app listening on port 8000!')
+  console.log('Listening on port 8000!')
 })

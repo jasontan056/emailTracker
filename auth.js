@@ -8,5 +8,6 @@ exports.login = function(req, res) {
 
 // Middleware that verifies JWT token.
 exports.verifyToken = function(req, res, next) {
+  req.userId = 123;
   next();
 };
