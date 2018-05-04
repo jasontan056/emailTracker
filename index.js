@@ -20,3 +20,5 @@ app.get('/pixel', tracking.getPixel);
 app.listen(8000, function () {
   console.log('Listening on port 8000!')
 })
+
+exports.app = app;

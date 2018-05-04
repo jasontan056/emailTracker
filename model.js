@@ -19,26 +19,18 @@ class Recipient {
   }
 };
 
-// !!! remove once user registration is added.
-/*redisClient.hmset("userEmail:hello@precognitive.io",
-  new User(123, 567, "hello@precognitive.io"));
-redisClient.set("userId:123", "hello@precognitive.io");*/
-
 exports.findUserEmail = function(userId, callback) {
-  redisClient.get("userId:" + userId, (err, user) => {
-    console.log("in finduser");
-    console.log(user);
-    callback(user);
+  redisClient.get("userId:" + userId, (err, userEmail) => {
+    callback(userEmail);
   });
 };
 
 exports.createUser = function(userEmail, hashedPassword, callback) {
   redisClient.incr('userId', (err, userId) => {
-    redisClient.hmset("userEmail:" + userEmail,
-      new User(userId, hashedPassword, userEmail),
-      (err, user) => {
-        redisClient.set("userId:" + user.userId, userEmail);
-        callback(user);
+    let newUser = new User(userId, hashedPassword, userEmail);
+    redisClient.hmset("userEmail:" + userEmail, newUser, (err, res) => {
+        redisClient.set("userId:" + userId, userEmail);
+        callback(newUser);
       });
   });
 }
@@ -78,22 +70,16 @@ exports.createRecipientId = function(userId, rEmail, callback) {
 };
 
 exports.findRecipient = function(rid, callback) {
-  console.log('in find recipient');
   redisClient.hgetall("rid:" + rid, (err, recipient) => {
     if (recipient) {
-      console.log('in find recipient. found recipient.');
       callback(recipient);
     } else {
-      console.log('in find recipient. couldnt find recipient.');
       callback(null);
     }
   });
 };
 
 exports.updateRecipient = function(rid, recipient) {
-  console.log('in create recipient');
-
   redisClient.hmset("rid:" + rid, recipient, (err, recipient) => {
-        console.log('in create recipient. created recipient');
       });
 };

@@ -5,7 +5,7 @@ let model = require('./model');
 
 // Registers a new user. Takes an email and password.
 exports.register = function(req, res) {
-  // !!! add check to check post inputs.
+  // !!! real version would need to check these inputs.
   let email = req.body.email;
   let hashedPassword = bcrypt.hashSync(req.body.password, 8);
   model.findUser(req.body.email, (user) => {
@@ -26,7 +26,7 @@ exports.register = function(req, res) {
 
 // Logins a user. Sends back a signed JWT token if credentials are correct.
 exports.login = function(req, res) {
-  // !!! add check to check post inputs.
+  // !!! real version would need to check these inputs.
   model.findUser(req.body.email, (user) => {
     if (!user) {
       return res.status(404).send('No user found.');
