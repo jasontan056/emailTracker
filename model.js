@@ -32,6 +32,23 @@ exports.findUserEmail = function(userId, callback) {
   });
 };
 
+exports.createUser = function(userEmail, hashedPassword, callback) {
+  redisClient.incr('userId', (err, userId) => {
+    redisClient.hmset("userEmail:" + userEmail,
+      new User(userId, hashedPassword, userEmail),
+      (err, user) => {
+        redisClient.set("userId:" + user.userId, userEmail);
+        callback(user);
+      });
+  });
+}
+
+exports.findUser = function(userEmail, callback) {
+  redisClient.hgetall("userEmail:" + userEmail, (err, user) => {
+    callback(user);
+  });
+};
+
 exports.createNewDeviceId = function(callback) {
   redisClient.incr('deviceId', (err, deviceId) => {
     callback(deviceId);
