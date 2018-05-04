@@ -15,6 +15,7 @@ class Recipient {
     this.userId = userId;
     this.timestamp = 0;
     this.ip = 0;
+    this.deviceId = 0;
   }
 };
 
@@ -30,6 +31,12 @@ exports.findUserEmail = function(userId, callback) {
     callback(user);
   });
 };
+
+exports.createNewDeviceId = function(callback) {
+  redisClient.incr('deviceId', (err, deviceId) => {
+    callback(deviceId);
+  });
+}
 
 exports.createRecipientId = function(userId, rEmail, callback) {
   redisClient.get("userId:" + userId + "/rEmail:" + rEmail,

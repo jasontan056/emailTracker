@@ -34,20 +34,30 @@ exports.getPixel = function(req, res) {
       return;
     }
 
-    console.log("found recipient");
     if (recipient.timestamp == 0) {
       console.log("first open");
       recipient.timestamp = new Date();
       recipient.ip = req.ip;
-      model.updateRecipient(rid, recipient);
-      emailNotif(userId, recipient.rEmail, recipient.timestamp, recipient.ip,
-        false, true);
+      model.createNewDeviceId((deviceId) => {
+        recipient.deviceId = deviceId;
+        console.log(recipient);
+        model.updateRecipient(rid, recipient);
+        emailNotif(userId, recipient.rEmail, recipient.timestamp, recipient.ip,
+          false, true);
+        let dateInFuture = new Date(new Date().setFullYear(
+          new Date().getFullYear() + 1));
+        res.cookie('deviceId', deviceId, {expire: dateInFuture});
+
+      });
     } else {
       console.log("repeat open");
-      // !!! update with cookie logic to check if same device.
+      console.log(recipient);
+      console.log(req.cookies);
+      sameDevice = req.cookies.deviceId == recipient.deviceId;
       emailNotif(userId, recipient.rEmail, recipient.timestamp, recipient.ip,
-        true, true);
+        true, sameDevice);
     }
+    res.status(200).sendFile(__dirname + '/pixel.png');
   });
 }
 

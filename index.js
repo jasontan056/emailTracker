@@ -6,6 +6,8 @@ let app = express()
 let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+let cookieParser = require('cookie-parser');
+app.use(cookieParser());
 let tracking = require('./tracking');
 let auth = require('./auth');
 
