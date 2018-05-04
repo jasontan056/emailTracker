@@ -1,3 +1,7 @@
+let jwt = require('jsonwebtoken');
+let bcrypt = require('bcryptjs');
+let config = require('config');
+
 // Registers a new user. Takes an email and password.
 exports.register = function(req, res) {
 };
