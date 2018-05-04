@@ -47,6 +47,16 @@ exports.login = function(req, res) {
 
 // Middleware that verifies JWT token.
 exports.verifyToken = function(req, res, next) {
-  req.userId = 123;
-  next();
+  let token = req.headers['x-access-token'];
+  if (!token)
+    return res.status(403).send({ auth: false, message: 'No token provided.' });
+  jwt.verify(token, config.SECRET, function(err, decoded) {
+    if (err) {
+      return res.status(500).send(
+        { auth: false, message: 'Failed to authenticate token.' });
+      }
+    // Put the decoded userId into the request for later functions.
+    req.userId = decoded.id;
+    next();
+  });
 };
